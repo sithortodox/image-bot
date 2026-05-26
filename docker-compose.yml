@@ -1,0 +1,25 @@
+services:
+  bot:
+    build: .
+    container_name: image_bot
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./storage:/app/storage
+    restart: unless-stopped
+    command: python -m app.bot.main
+
+  webhook:
+    build: .
+    container_name: image_bot_webhook
+    env_file:
+      - .env
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    command: uvicorn app.web.main:app --host 0.0.0.0 --port 8000
